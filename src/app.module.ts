@@ -19,14 +19,6 @@ import { HttpModule } from '@nestjs/axios';
             { name: 'crm', url: process.env.CRM_GQL_ADDRESS },
           ],
         }),
-        // buildService({ name, url }) {
-        //   return new RemoteGraphQLDataSource({
-        //     url,
-        //     willSendRequest({ request, context }) {
-        //       request.http.headers.set('user-id', "12")
-        //     }
-        //   })
-        // }
         buildService: ({ name, url }) => {
           return new RemoteGraphQLDataSource({
             url,
@@ -36,9 +28,14 @@ import { HttpModule } from '@nestjs/axios';
                 'query __ApolloGetServiceDefinition__ { _service { sdl } }'
               )
                 return;
+              const publicPath = process.env.PUBLIC_QUERY_MUTATIONS?.split(',') || [];
+              for(const path of publicPath) {
+                if (request.query.indexOf(`{${path}(`) >= 0) return;
+              }
               const token = context.req?.headers['authorization']?.split(' ')[1];
               if (!token) throw new HttpException('You need to pass authorization header', 403);
-              if (!await AppService.auth(token))  throw new HttpException('unauthorized access', 406);
+              const authResult = await AppService.auth(token);
+              if (!authResult) throw new HttpException('unauthorized access', 406);
             },
           });
         },
@@ -48,4 +45,4 @@ import { HttpModule } from '@nestjs/axios';
   controllers: [],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
