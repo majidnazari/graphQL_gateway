@@ -29,13 +29,14 @@ import { HttpModule } from '@nestjs/axios';
               )
                 return;
               const publicPath = process.env.PUBLIC_QUERY_MUTATIONS?.split(',') || [];
-              for(const path of publicPath) {
+              for (const path of publicPath) {
                 if (request.query.indexOf(`{${path}(`) >= 0) return;
               }
               const token = context.req?.headers['authorization']?.split(' ')[1];
               if (!token) throw new HttpException('You need to pass authorization header', 403);
               const authResult = await AppService.auth(token);
               if (!authResult) throw new HttpException('unauthorized access', 406);
+              request.http.headers.set('authorization', context.req?.headers['authorization']);
             },
           });
         },

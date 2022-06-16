@@ -6,14 +6,18 @@ export class AppService {
   static async auth(token: string): Promise<boolean> {
     const publicRoutes = [];
     const query = `{
-      gettest(token: "${token}")
+      testHeader(simpleparameter: "${token}")
     }`;
     try {
-      const res = await axios.post(process.env.ACADEMY_GQL_ADDRESS, {
-        query,
-      }, {
+      const res = await axios({
+        method: 'POST',
+        url: process.env.ACADEMY_GQL_ADDRESS,
+        data: {
+          query,
+        },
         headers: {
-          authorization: `Bearer ${token}`
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
         }
       });
       if (res.data.errors?.length > 0) {
