@@ -4,7 +4,7 @@ import { Token } from './entity/token.entity';
 
 @Injectable()
 export class AppService {
-  static tokens: Token[];
+  static tokens: Token[] = [];
   static findToken(token: string): Token {
     const find = AppService.tokens.find(t => t.token === token);
     if (find && !find.isExpired()) {
