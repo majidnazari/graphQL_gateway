@@ -17,6 +17,7 @@ import { HttpModule } from '@nestjs/axios';
           subgraphs: [
             { name: 'academy', url: process.env.ACADEMY_GQL_ADDRESS },
             { name: 'crm', url: process.env.CRM_GQL_ADDRESS },
+            { name: 'consultant', url: process.env.CONSULTANT_ADDRESS },
           ],
         }),
         buildService: ({ name, url }) => {
